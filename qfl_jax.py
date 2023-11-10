@@ -7,17 +7,12 @@ import random
 import tensorcircuit as tc
 from tqdm import tqdm
 from hashlib import sha256
-
 import time
-from datetime import datetime
-
-expNo = 0
 
 n = 8
 n_node = 8
 device_set = {}
 n_class = 3
-
 k = 12
 readout_mode = 'softmax'
 K = tc.set_backend('jax')  
@@ -33,8 +28,6 @@ def filter(x, y, class_list):
     x, y = x[keep], y[keep]
     y = jax.nn.one_hot(y, n_node)
     return x, y
-
-
 
 def clf(params, c, k): 
     for j in range(k):
@@ -138,7 +131,6 @@ for node in range(n_node-1):
 devices_list = list(device_set.values())
 
 def workerTask(device, local_epochs, b):
-    print(f"Device {device.id} training start...")
     for epoch in tqdm(range(local_epochs), leave=False):
         for i, (x, y) in enumerate(device.data):
             x = x.numpy()
@@ -147,14 +139,10 @@ def workerTask(device, local_epochs, b):
             updates, device.opt_state = opt.update(grad_val, device.opt_state, device.params)
             device.params = optax.apply_updates(device.params, updates)  
             device.params_hash = int.from_bytes(sha256(str(device.params).encode('utf-8')).digest(), byteorder='big')
-
             loss_mean = jnp.mean(loss_val)
-
             if i % 20 == 0:
                 acc = jnp.mean(compute_accuracy(device.params, x, y, k))
-                tqdm.write(
-                    f'world {b}, epoch {epoch}, {i}/{len(device.data)}: loss={loss_mean:.4f}, acc={acc:.4f}')
-               
+                tqdm.write(f'world {b}, epoch {epoch}, {i}/{len(device.data)}: loss={loss_mean:.4f}, acc={acc:.4f}')
         print(f"Device {device.id} training Epoch: {epoch} done...")
     print(f"Device {device.id} training ALL EPOCHS done...")
  
@@ -166,17 +154,14 @@ def device_training(local_epochs, b):
 avg_params = None
 def serverTask(b):
     params_list = []
-    serverDevice = None
     for device in devices_list:
         params_list.append(device.params)
     avg_params = jnp.mean(jnp.stack(params_list, axis=0), axis=0)
     for device in devices_list:
         device.params = avg_params
-
     test_acc = jnp.mean(pred(avg_params, x_test[:1024], k).argmax(axis=-1) == y_test[:1024].argmax(axis=-1))
     test_loss = -jnp.mean(jnp.log(pred(avg_params, x_test[:1024], k)) * y_test[:1024])
     tqdm.write(f'world {b}: test acc={test_acc:.4f}, test loss={test_loss:.4f}')
-
 
 loss_list = []
 acc_list = []
@@ -190,7 +175,6 @@ for b in range(10):
     print(f"COMM ROUND: {b} - Start Server Task")
     serverTask(b)
     final_time = time.time_ns() - current_time
-
 
 # Reference:
 # https://github.com/haimengzhao/quantum-fed-infer
