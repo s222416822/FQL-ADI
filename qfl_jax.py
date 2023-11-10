@@ -10,13 +10,6 @@ from hashlib import sha256
 
 import time
 from datetime import datetime
-import os
-
-date_time = datetime.now().strftime("%m%d%Y_%H%M%S")
-logs = f"logs/{date_time}"
-
-if not os.path.exists(logs):
-		os.makedirs(logs)
 
 expNo = 0
 
