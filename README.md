@@ -22,4 +22,6 @@ Before you begin, ensure you have met the following requirements:
 - [JAX](https://github.com/google/jax) (Refer to their installation guide)
 - [PennyLane](https://pennylane.ai/) (Refer to their installation guide)
   
-
+## References:
+1. https://pennylane.ai/qml/demos/tutorial_variational_classifier/
+2. https://github.com/haimengzhao/quantum-fed-infer 
