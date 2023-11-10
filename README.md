@@ -1,4 +1,4 @@
-# FQL-ADI: Quantum Federated Learning, Analysis, Design, and Implementation
+# FQL-ADI: Federated Quantum Learning, Analysis, Design, and Implementation
 Welcome to the FQL-ADI repository, where we present code implementation for a QFL framework.
 Implementation include both JAX and PennyLane, two of the leading libraries for quantum and differentiable programming.
 
