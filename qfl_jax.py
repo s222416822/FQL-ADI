@@ -198,3 +198,6 @@ for b in range(10):
     serverTask(b)
     final_time = time.time_ns() - current_time
 
+
+# Reference:
+# https://github.com/haimengzhao/quantum-fed-infer
