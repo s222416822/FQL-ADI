@@ -1,15 +1,14 @@
 import numpy as np
 import tensorflow as tf
+import pennylane as qml
+from pennylane import numpy as np
+from pennylane.optimize import NesterovMomentumOptimizer
+import time
 
 # Load the MNIST dataset
 (train_images, train_labels), (test_images, test_labels) = tf.keras.datasets.mnist.load_data()
 train_images = train_images.reshape(train_images.shape[0], 28*28) / 255.0
 test_images = test_images.reshape(test_images.shape[0], 28*28) / 255.0
-
-import pennylane as qml
-from pennylane import numpy as np
-from pennylane.optimize import NesterovMomentumOptimizer
-import time
 
 # Federated learning setup
 num_devices = 10
@@ -89,7 +88,6 @@ def get_angles(x):
 
 data1 = np.loadtxt("iris_classes1and2_scaled.txt")
 device_data = np.array_split(data1, num_devices)
-
 num_qubits = 2
 num_layers = 6
 batch_size = 5
@@ -140,10 +138,8 @@ for it in range(20):
     cost_array.append(cost_value)
     acc_train_array.append(acc_train)
     acc_val_array.append(acc_val)
-    print(
-        "Comm: {:5d} | Device: {:5d} | Cost: {:0.7f} | Acc train: {:0.7f} | Acc validation: {:0.7f} "
-        "".format(it + 1, i,  cost_value, acc_train, acc_val)
-    )
+    print("Comm: {:5d} | Device: {:5d} | Cost: {:0.7f} | Acc train: {:0.7f} | Acc validation: {:0.7f} "
+        "".format(it + 1, i,  cost_value, acc_train, acc_val))
     total_train_acc += acc_train
     total_val_acc += acc_val
     total_cost += cost_value
